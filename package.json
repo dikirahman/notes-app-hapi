@@ -1,0 +1,33 @@
+{
+  "name": "notes-app-hapi",
+  "version": "1.0.0",
+  "description": "Notes app using Hapi framework",
+  "main": "index.js",
+  "scripts": {
+    "start-prod": "NODE_ENV=production node ./src/server.js",
+    "start-dev": "nodemon ./src/server.js",
+    "lint": "eslint ./src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dikirahman/notes-app-hapi.git"
+  },
+  "author": "Diki Rahman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dikirahman/notes-app-hapi/issues"
+  },
+  "homepage": "https://github.com/dikirahman/notes-app-hapi#readme",
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "nodemon": "^2.0.12"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^20.1.5",
+    "nanoid": "^3.1.25"
+  }
+}
