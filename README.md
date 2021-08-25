@@ -1,2 +1,3 @@
 # notes-app-hapi
-Simple Notes App Using Hapi
+Notes App menggunakan Hapi Framework dan Database Postgres
+serta menggunakan validator untuk memvalidasi data yang di input user
