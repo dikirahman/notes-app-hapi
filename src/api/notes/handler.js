@@ -159,6 +159,7 @@ class NotesHandler {
         }
     }
 
+    // delete note by id
     async deleteNoteByIdHandler(request, h) {
         try {
             // get data from request parameter
