@@ -15,13 +15,17 @@ class NotesHandler {
     // post note
     async postNoteHandler(request, h) {
         try {
-            // call validator
+            // validate payload
             this._validator.validateNotePayload(request.payload);
             // get data from request payload
             const { title = 'untitled', body, tags } = request.payload;
+            // get user id from credential
+            const { id: credentialId } = request.auth.credentials;
 
-            // call method
-            const noteId = await this._service.addNote({ title, body, tags });
+            // add note
+            const noteId = await this._service.addNote({ 
+                title, body, tags, owner: credentialId, 
+            });
 
             // return a successful response
             const response = h.response({
@@ -61,9 +65,11 @@ class NotesHandler {
     }
 
     // get all notes
-    async getNotesHandler() {
-        // call method
-        const notes = await this._service.getNotes();
+    async getNotesHandler(request) {
+        // get user id from credential
+        const { id: credentialId } = request.auth.credentials;
+        // get note
+        const notes = await this._service.getNotes(credentialId);
 
         // return a successful response
         return {
@@ -79,9 +85,13 @@ class NotesHandler {
         try {
             // get data from request parameter
             const { id } = request.params;
+            // get user id from credential
+            const { id: credentialId } = request.auth.credentials;
 
-            // call method
-            const note = await this._service.getNoteById(id);
+            // verify note owner
+            await this._service.verifyNoteOwner(id, credentialId);
+            // get note
+            const note = await this._service.getNoteById(id, credentialId);
 
             // return a successful response
             return {
@@ -124,8 +134,13 @@ class NotesHandler {
             this._validator.validateNotePayload(request.payload);
             // get data from request parameter
             const { id } = request.params;
+            // get user id from creadential
+            const { id: credentialId} = request.auth.credentials;
         
-            // call method
+            
+            // verify note owner
+            await this._service.verifyNoteOwner(id, credentialId);
+            // edit note
             await this._service.editNoteById(id, request.payload);
         
             // return a successful response
@@ -164,8 +179,12 @@ class NotesHandler {
         try {
             // get data from request parameter
             const { id } = request.params;
+            // get user id from credential
+            const { id: credentialId } = request.auth.credentials;
 
-            // call method
+            // verify owner
+            await this._service.verifyNoteOwner(id, credentialId);
+            // delete note
             await this._service.deleteNoteById(id);
 
             // return a successfull response
@@ -176,13 +195,25 @@ class NotesHandler {
         // if it fails
         } catch (error) {
             // return a error response
+            if (error instanceof ClientError) {
+                const response = h.response({
+                  status: 'fail',
+                  message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+           
+            // Server ERROR!
             const response = h.response({
-                status: 'fail',
-                message: 'Catatan gagal dihapus. Id tidak ditemukan',
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
             });
-            
-            response.code(404);
+
+            response.code(500);
+            console.error(error);
             return response;
+            
         }
     }
 }
