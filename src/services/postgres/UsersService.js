@@ -103,6 +103,7 @@ class UsersService {
 
     // get user by username
     async getUsersByUsername(username) {
+        // get data user by username
         const query = {
             text: 'SELECT id, username, fullname FROM users WHERE username LIKE $1',
             values: [`%${username}%`],
